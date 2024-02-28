@@ -1,6 +1,10 @@
+import com.google.protobuf.gradle.id
+import com.google.protobuf.gradle.proto
+
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    alias(libs.plugins.protobuf)
 }
 
 android {
@@ -33,6 +37,14 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
+    sourceSets {
+        getByName("main") {
+            proto {
+                srcDir("src/main/proto")
+            }
+        }
+    }
 }
 
 dependencies {
@@ -44,4 +56,34 @@ dependencies {
     implementation(libs.grpc.stub)
 
     testImplementation(libs.junit)
+}
+
+protobuf {
+    protoc { artifact = "com.google.protobuf:protoc:${libs.versions.protoc}" }
+
+    plugins {
+        id("grpc") {
+            artifact = "io.grpc:protoc-gen-grpc-java:${libs.versions.grpc}"
+        }
+    }
+
+    generateProtoTasks {
+        all().forEach { task ->
+            task.plugins {
+                id("javalite") { }
+            }
+        }
+    }
+
+//    generateProtoTasks {
+//        all().each { task ->
+//            task.builtins {
+//                java { option 'lite' }
+//            }
+//
+//            task.plugins {
+//                grpc { option 'lite' }
+//            }
+//        }
+//    }
 }
