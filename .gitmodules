@@ -1,0 +1,6 @@
+[submodule "nosy-logger-protos"]
+	path = protos
+	url = https://github.com/kkosobudzki/nosy-logger-protos
+[submodule "protos"]
+	path = protos
+	url = https://github.com/kkosobudzki/nosy-logger-protos
