@@ -41,7 +41,7 @@ android {
     sourceSets {
         getByName("main") {
             proto {
-                srcDir("src/main/proto")
+                srcDir("../protos")
             }
         }
     }
