@@ -1,4 +1,3 @@
-import com.google.protobuf.gradle.id
 import com.google.protobuf.gradle.proto
 
 plugins {
@@ -41,7 +40,7 @@ android {
     sourceSets {
         getByName("main") {
             proto {
-                srcDir("../protos")
+                srcDir("../../protos")
             }
         }
     }
@@ -59,31 +58,29 @@ dependencies {
 }
 
 protobuf {
-    protoc { artifact = "com.google.protobuf:protoc:${libs.versions.protoc}" }
+    protoc {
+        artifact = libs.protoc.get().toString()
+    }
 
     plugins {
-        id("grpc") {
-            artifact = "io.grpc:protoc-gen-grpc-java:${libs.versions.grpc}"
+        create("grpc") {
+            artifact = libs.grpc.protoc.get().toString()
         }
     }
 
     generateProtoTasks {
         all().forEach { task ->
+            task.builtins {
+                create("java") {
+                    option("lite")
+                }
+            }
+
             task.plugins {
-                id("javalite") { }
+                create("grpc") {
+                    option("lite")
+                }
             }
         }
     }
-
-//    generateProtoTasks {
-//        all().each { task ->
-//            task.builtins {
-//                java { option 'lite' }
-//            }
-//
-//            task.plugins {
-//                grpc { option 'lite' }
-//            }
-//        }
-//    }
 }
