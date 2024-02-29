@@ -13,8 +13,8 @@ jobs:
       - name: set up java 17
         uses: actions/setup-java@v3
         with:
-          java-version: '17'
-          distribution: 'zulu'
+          java-version: "17"
+          distribution: "zulu"
       - name: install keystore
         env:
           KEYSTORE_BASE64: ${{ secrets.keystore }}
@@ -25,6 +25,7 @@ jobs:
       - name: create aar
         run: |
           ./gradlew clean
+          ./gradlew generateReleaseProto
           ./gradlew assembleRelease
         env:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
