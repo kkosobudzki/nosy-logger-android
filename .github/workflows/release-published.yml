@@ -27,7 +27,6 @@ jobs:
       - name: create aar
         run: |
           ./gradlew clean
-          ./gradlew generateReleaseProto
           ./gradlew assembleRelease
         env:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
