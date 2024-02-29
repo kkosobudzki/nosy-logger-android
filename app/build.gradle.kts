@@ -119,33 +119,33 @@ publishing {
                 }
 
                 scm {
-                    url = "https://github.com/kkosobudzki/nosy-android.git"
+                    url = "https://github.com/kkosobudzki/nosy-logger-android.git"
                 }
 
                 developers {
                     developer {
-                        name = 'Krzysztof Kosobudzki'
-                        email = 'krzysztof.kosobudzki@gmail.com'
+                        name = "Krzysztof Kosobudzki"
+                        email = "krzysztof.kosobudzki@gmail.com"
                         // TODO update with nosytools.dev email
                     }
                 }
             }
 
-            afterEvaluate {
-                from components.release
-            }
+//            afterEvaluate {
+//                from components.release
+//            }
         }
     }
 
-    signing {
-        def id = System.getenv("SIGNING_KEY_ID")
-        def password = System.getenv("SIGNING_KEY_PASSWORD")
-        def key = System.getenv("SIGNING_KEY")
-
-        useInMemoryPgpKeys(id, key, password)
-
-        sign publishing.publications.release
-    }
+//    signing {
+//        def id = System.getenv("SIGNING_KEY_ID")
+//        def password = System.getenv("SIGNING_KEY_PASSWORD")
+//        def key = System.getenv("SIGNING_KEY")
+//
+//        useInMemoryPgpKeys(id, key, password)
+//
+//        sign publishing.publications.release
+//    }
 
     repositories {
         maven {
