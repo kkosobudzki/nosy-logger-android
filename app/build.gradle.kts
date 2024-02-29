@@ -15,8 +15,6 @@ android {
 
     defaultConfig {
         minSdk = 28
-//        versionCode = 2
-//        versionName = "1.0.0"
     }
 
     signingConfigs {
@@ -117,7 +115,7 @@ publishing {
         register<MavenPublication>("release") {
             groupId = "dev.nosytools"
             artifactId = "logger"
-            version = android.defaultConfig.versionName
+            version = "1.0.0"
 
             pom {
                 name = "logger"
