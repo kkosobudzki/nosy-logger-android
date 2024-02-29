@@ -1,0 +1,27 @@
+[versions]
+agp = "8.3.0-beta02"
+kotlin = "1.9.0"
+coreKtx = "1.12.0"
+junit = "4.13.2"
+bouncycastle = "1.71"
+grpc = "1.57.0"
+protobuf = "0.9.4"
+protoc = "3.23.4"
+javax = "1.3.2"
+
+[libraries]
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+bouncycastle-pkix = { group = "org.bouncycastle", name = "bcpkix-jdk15to18", version.ref = "bouncycastle" }
+bouncycastle-prov = { group = "org.bouncycastle", name = "bcprov-jdk15to18", version.ref = "bouncycastle" }
+grpc-okhttp = { group = "io.grpc", name = "grpc-okhttp", version.ref = "grpc" }
+grpc-protobuf-lite = { group = "io.grpc", name = "grpc-protobuf-lite", version.ref = "grpc" }
+grpc-stub = { group = "io.grpc", name = "grpc-stub", version.ref = "grpc" }
+grpc-protoc = { group = "io.grpc", name = "protoc-gen-grpc-java", version.ref = "grpc" }
+protoc = { group = "com.google.protobuf", name = "protoc", version.ref = "protoc" }
+javax-annotation-api = { group = "javax.annotation", name = "javax.annotation-api", version.ref = "javax" }
+
+[plugins]
+androidLibrary = { id = "com.android.library", version.ref = "agp" }
+jetbrainsKotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+protobuf = { id = "com.google.protobuf", version.ref = "protobuf" }
