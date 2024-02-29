@@ -16,14 +16,24 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     buildTypes {
         release {
+            // TODO => true
             isMinifyEnabled = false
+
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
         }
+    }
+
+    buildTypes.forEach {
+        it.buildConfigField("String", "COLLECTOR_URL", "\"logger-collector.fly.dev\"")
     }
 
     compileOptions {
@@ -53,6 +63,7 @@ dependencies {
     implementation(libs.grpc.okhttp)
     implementation(libs.grpc.protobuf.lite)
     implementation(libs.grpc.stub)
+    implementation(libs.javax.annotation.api)
 
     testImplementation(libs.junit)
 }

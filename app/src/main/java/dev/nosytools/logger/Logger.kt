@@ -8,7 +8,7 @@ import nosy_logger.LoggerGrpc.LoggerStub
 import nosy_logger.LoggerOuterClass.Empty
 import nosy_logger.LoggerOuterClass.Log
 
-internal class Logger(private val config: Config) {
+class Logger(private val config: Config) {
 
   private val stub: LoggerStub by lazy {
     val headers = Metadata().apply {
@@ -26,7 +26,7 @@ internal class Logger(private val config: Config) {
 
   private lateinit var encryptor: Encryptor
 
-  internal fun init(onCompleted: () -> Unit, onError: (Throwable?) -> Unit) {
+  fun init(onCompleted: () -> Unit, onError: (Throwable?) -> Unit) {
     stub.handshake(
       Empty.newBuilder().build(),
       DelegatedStreamObserver(
@@ -42,7 +42,7 @@ internal class Logger(private val config: Config) {
     )
   }
 
-  internal fun log(logs: List<Log>, onCompleted: () -> Unit, onError: (Throwable?) -> Unit) {
+  fun log(logs: List<Log>, onCompleted: () -> Unit, onError: (Throwable?) -> Unit) {
     logs.map(::encrypt)
       .toLogs()
       .also {
