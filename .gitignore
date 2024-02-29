@@ -8,6 +8,7 @@ build/
 # Keystore
 *.keystore
 *.gpg
+*.asc
 
 # Mac OS X
 .DS_Store
