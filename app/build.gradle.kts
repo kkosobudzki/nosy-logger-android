@@ -115,7 +115,7 @@ publishing {
         register<MavenPublication>("release") {
             groupId = "dev.nosytools"
             artifactId = "logger"
-            version = "1.0.0"
+            version = System.getenv("VERSION")
 
             pom {
                 name = "logger"

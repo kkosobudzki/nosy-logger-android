@@ -16,6 +16,10 @@ jobs:
         with:
           token: ${{ secrets.PROTOS_SUBMODULE_TOKEN }}
           submodules: true
+      - name: create version
+        run: |
+          VERSION=${{ github.event.release.tag_name }}
+          echo "VERSION=${VERSION:1}" >> $GITHUB_ENV
       - name: set up java 17
         uses: actions/setup-java@v3
         with:
@@ -47,7 +51,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release create "${{ github.ref }}" \
+          gh release create "$VERSION" \
             --repo="$GITHUB_REPOSITORY" \
-            --title="${{ github.ref }}" \
+            --title="$VERSION" \
             --generate-notes
