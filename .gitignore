@@ -6,3 +6,11 @@ gradlew.bat
 
 # Android Studio
 .idea
+
+# Keystore
+*.keystore
+*.gpg
+
+# Mac OS X
+.DS_Store
+
