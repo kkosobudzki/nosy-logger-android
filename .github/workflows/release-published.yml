@@ -44,12 +44,10 @@ jobs:
           SIGNING_KEY_PASSWORD: ${{ secrets.MAVEN_SIGNING_KEY_PASSWORD }}
           SIGNING_KEY: ${{ secrets.MAVEN_SIGNING_KEY }}
       - name: create release
-        uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: ${{ github.ref }}
-          body: Nosy Logger Android plugin ${{ github.ref }}
-          draft: false
-          prerelease: false
+        run: |
+          gh release create "${{ github.ref }}" \
+            --repo="$GITHUB_REPOSITORY" \
+            --title="${{ github.ref }}" \
+            --generate-notes
