@@ -114,7 +114,7 @@ protobuf {
 
 publishing {
     publications {
-        register("release", MavenPublication::class) {
+        register<MavenPublication>("release") {
             groupId = "dev.nosytools"
             artifactId = "logger"
             version = android.defaultConfig.versionName
