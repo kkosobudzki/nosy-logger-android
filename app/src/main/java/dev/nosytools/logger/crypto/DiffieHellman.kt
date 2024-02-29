@@ -1,4 +1,4 @@
-package dev.nosytools.logger
+package dev.nosytools.logger.crypto
 
 import java.security.KeyFactory
 import java.security.KeyPair

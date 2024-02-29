@@ -1,5 +1,6 @@
-package dev.nosytools.logger
+package dev.nosytools.logger.grpc
 
+import dev.nosytools.logger.error
 import io.grpc.stub.StreamObserver
 
 internal class DelegatedStreamObserver<T>(
