@@ -4,3 +4,6 @@
 [submodule "protos"]
 	path = protos
 	url = https://github.com/kkosobudzki/nosy-logger-protos
+[submodule "app/src/main/protos"]
+	path = app/src/main/protos
+	url = https://github.com/kkosobudzki/nosy-logger-protos
