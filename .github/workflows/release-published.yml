@@ -11,6 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
+          token: ${{ secrets.PROTOS_SUBMODULE_TOKEN }}
           submodules: true
       - run: ls -al app/src/main/protos
       - name: set up java 17
