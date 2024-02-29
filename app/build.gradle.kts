@@ -15,8 +15,19 @@ android {
 
     defaultConfig {
         minSdk = 28
+//        versionCode = 2
+//        versionName = "1.0.0"
+    }
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    signingConfigs {
+        create("release") {
+            if (System.getenv("KEYSTORE").isNotEmpty()) {
+                storeFile = file(System.getenv("KEYSTORE"))
+                storePassword = System.getenv("KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("KEY_ALIAS")
+                keyPassword = System.getenv("KEY_PASSWORD")
+            }
+        }
     }
 
     buildFeatures {
@@ -32,6 +43,8 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 
@@ -131,21 +144,21 @@ publishing {
                 }
             }
 
-//            afterEvaluate {
-//                from components.release
-//            }
+            afterEvaluate {
+                from(components["release"])
+            }
         }
     }
 
-//    signing {
-//        def id = System.getenv("SIGNING_KEY_ID")
-//        def password = System.getenv("SIGNING_KEY_PASSWORD")
-//        def key = System.getenv("SIGNING_KEY")
-//
-//        useInMemoryPgpKeys(id, key, password)
-//
-//        sign publishing.publications.release
-//    }
+    signing {
+        val id = System.getenv("SIGNING_KEY_ID")
+        val password = System.getenv("SIGNING_KEY_PASSWORD")
+        val key = System.getenv("SIGNING_KEY")
+
+        useInMemoryPgpKeys(id, key, password)
+
+        sign(publishing.publications.getByName("release"))
+    }
 
     repositories {
         maven {
