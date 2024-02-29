@@ -1,11 +1,11 @@
 name: Build release
 
 on:
-#  release:
-#    types: [published]
+  #  release:
+  #    types: [published]
   push:
     tags:
-      - 'v*'
+      - "v*"
 
 jobs:
   build:
@@ -44,7 +44,7 @@ jobs:
           SIGNING_KEY_PASSWORD: ${{ secrets.MAVEN_SIGNING_KEY_PASSWORD }}
           SIGNING_KEY: ${{ secrets.MAVEN_SIGNING_KEY }}
       - name: create release
-        uses: actions/create-relase@v1
+        uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
