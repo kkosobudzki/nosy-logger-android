@@ -159,10 +159,11 @@ publishing {
     }
 
     signing {
+        val id = System.getenv("SIGNING_KEY_ID")
         val password = System.getenv("SIGNING_KEY_PASSWORD")
         val key = System.getenv("SIGNING_KEY")
 
-        useInMemoryPgpKeys(key, password)
+        useInMemoryPgpKeys(id, key, password)
 
         sign(publishing.publications.getByName("release"))
     }
