@@ -48,7 +48,7 @@ android {
     }
 
     buildTypes.forEach {
-        it.buildConfigField("String", "COLLECTOR_URL", "\"logger-collector.fly.dev\"")
+        it.buildConfigField("String", "COLLECTOR_URL", "\"${System.getenv("COLLECTOR_URL")}\"")
     }
 
     compileOptions {
