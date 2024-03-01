@@ -6,6 +6,7 @@ import io.grpc.Metadata
 import io.grpc.stub.MetadataUtils
 import nosy_logger.LoggerGrpc
 import nosy_logger.LoggerOuterClass
+import nosy_logger.LoggerOuterClass.Log
 import kotlin.coroutines.suspendCoroutine
 
 internal class Collector(private val apiKey: String) {
@@ -32,6 +33,17 @@ internal class Collector(private val apiKey: String) {
 
         return remotePublicKey.key
     }
+
+    internal suspend fun log(logs: List<Log>) {
+        suspendCoroutine { continuation ->
+            stub.log(logs.toLogs(), CoroutineStreamObserver(continuation))
+        }
+    }
+
+    private fun List<Log>.toLogs(): LoggerOuterClass.Logs =
+        LoggerOuterClass.Logs.newBuilder()
+            .also { builder -> forEach(builder::addLogs) }
+            .build()
 
     private companion object {
         val API_KEY_METADATA: Metadata.Key<String> =
