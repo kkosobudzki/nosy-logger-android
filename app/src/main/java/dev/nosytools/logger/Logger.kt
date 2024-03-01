@@ -2,19 +2,12 @@ package dev.nosytools.logger
 
 import dev.nosytools.logger.crypto.DiffieHellman
 import dev.nosytools.logger.crypto.Encryptor
-import dev.nosytools.logger.grpc.CoroutineStreamObserver
+import dev.nosytools.logger.grpc.Collector
 import dev.nosytools.logger.scheduler.Scheduler
-import io.grpc.ManagedChannelBuilder
-import io.grpc.Metadata
-import io.grpc.stub.MetadataUtils
-import nosy_logger.LoggerGrpc
-import nosy_logger.LoggerGrpc.LoggerStub
 import nosy_logger.LoggerOuterClass
-import nosy_logger.LoggerOuterClass.Empty
 import nosy_logger.LoggerOuterClass.Log
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import java.security.Security
-import kotlin.coroutines.suspendCoroutine
 
 class Logger(private val apiKey: String) {
 
@@ -23,19 +16,9 @@ class Logger(private val apiKey: String) {
         Security.addProvider(BouncyCastleProvider())
     }
 
-    private val stub: LoggerStub by lazy {
-        val headers = Metadata().apply {
-            put(API_KEY_METADATA, apiKey)
-        }
-
-        ManagedChannelBuilder.forTarget(BuildConfig.COLLECTOR_URL)
-            .useTransportSecurity()
-            .build()
-            .let(LoggerGrpc::newStub)
-            .withInterceptors(MetadataUtils.newAttachHeadersInterceptor(headers))
-    }
+    private val collector by lazy { Collector(apiKey) }
     private val diffieHellman by lazy { DiffieHellman() }
-    private val scheduler by lazy { Scheduler(stub) }
+    private val scheduler by lazy { Scheduler(collector) }
 
     private lateinit var encryptor: Encryptor
 
@@ -44,15 +27,10 @@ class Logger(private val apiKey: String) {
             throw IllegalStateException("Already initialized")
         }
 
-        val remotePublicKey = suspendCoroutine { continuation ->
-            stub.handshake(
-                Empty.newBuilder().build(),
-                CoroutineStreamObserver(continuation)
-            )
-        }
+        val remotePublicKey = collector.handshake()
 
         encryptor = Encryptor(
-            sharedSecretKey = diffieHellman.sharedSecret(remotePublicKey.key)
+            sharedSecretKey = diffieHellman.sharedSecret(remotePublicKey)
         )
     }
 
@@ -74,18 +52,10 @@ class Logger(private val apiKey: String) {
         val log = Log.newBuilder()
             .setDate(now())
             .setLevel(level)
-            .setMessage(message.encrypt())
+            .setMessage(encryptor.encrypt(message))
             .setPublicKey(diffieHellman.publicKey)
             .build()
 
         scheduler.schedule(log)
-    }
-
-    private fun String.encrypt(): String =
-        encryptor.encrypt(this)
-
-    private companion object {
-        val API_KEY_METADATA: Metadata.Key<String> =
-            Metadata.Key.of("api-key", Metadata.ASCII_STRING_MARSHALLER)
     }
 }
