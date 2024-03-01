@@ -3,7 +3,6 @@ package dev.nosytools.logger
 import dev.nosytools.logger.crypto.DiffieHellman
 import dev.nosytools.logger.crypto.Encryptor
 import dev.nosytools.logger.grpc.CoroutineStreamObserver
-import dev.nosytools.logger.grpc.DelegatedStreamObserver
 import io.grpc.ManagedChannelBuilder
 import io.grpc.Metadata
 import io.grpc.stub.MetadataUtils
@@ -51,15 +50,14 @@ class Logger(private val config: Config) {
         )
     }
 
-    fun log(logs: List<Log>, onCompleted: () -> Unit, onError: (Throwable?) -> Unit) {
-        logs.map(::encrypt)
-            .toLogs()
-            .also {
-                stub.log(
-                    it,
-                    DelegatedStreamObserver(whenCompleted = onCompleted, whenError = onError)
-                )
-            }
+    suspend fun log(logs: List<Log>) {
+        suspendCoroutine { continuation ->
+            logs.map(::encrypt)
+                .toLogs()
+                .also {
+                    stub.log(it, CoroutineStreamObserver(continuation))
+                }
+        }
     }
 
     private fun encrypt(log: Log): Log =
