@@ -1,4 +1,4 @@
-package dev.nosytools.logger
+package dev.nosytools.logger.grpc
 
 import nosy_logger.LoggerOuterClass.Log
 import nosy_logger.LoggerOuterClass.Logs

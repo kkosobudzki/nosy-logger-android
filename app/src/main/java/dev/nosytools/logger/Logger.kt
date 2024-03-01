@@ -3,13 +3,16 @@ package dev.nosytools.logger
 import dev.nosytools.logger.crypto.DiffieHellman
 import dev.nosytools.logger.crypto.Encryptor
 import dev.nosytools.logger.grpc.CoroutineStreamObserver
+import dev.nosytools.logger.grpc.toLogs
 import io.grpc.ManagedChannelBuilder
 import io.grpc.Metadata
 import io.grpc.stub.MetadataUtils
 import nosy_logger.LoggerGrpc
 import nosy_logger.LoggerGrpc.LoggerStub
+import nosy_logger.LoggerOuterClass
 import nosy_logger.LoggerOuterClass.Empty
 import nosy_logger.LoggerOuterClass.Log
+import now
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import java.security.Security
 import kotlin.coroutines.suspendCoroutine
@@ -54,27 +57,36 @@ class Logger(private val apiKey: String) {
         )
     }
 
-    suspend fun log(logs: List<Log>) {
+    suspend fun debug(message: String) = log(message, LoggerOuterClass.Level.LEVEL_DEBUG)
+
+    suspend fun info(message: String) = log(message, LoggerOuterClass.Level.LEVEL_INFO)
+
+    suspend fun warning(message: String) = log(message, LoggerOuterClass.Level.LEVEL_WARN)
+
+    suspend fun error(message: String) = log(message, LoggerOuterClass.Level.LEVEL_ERROR)
+
+    suspend fun exception(throwable: Throwable) = error(throwable.message ?: "$throwable")
+
+    private suspend fun log(message: String, level: LoggerOuterClass.Level) {
         if (!this::encryptor.isInitialized) {
             throw IllegalStateException("Not initialized - make sure to call init() before you start logging")
         }
 
-        suspendCoroutine { continuation ->
-            logs.map(::encrypt)
-                .toLogs()
-                .also {
-                    stub.log(it, CoroutineStreamObserver(continuation))
-                }
-        }
-    }
+        // TODO log to work manager and the send
 
-    private fun encrypt(log: Log): Log =
-        Log.newBuilder()
-            .setDate(log.date)
-            .setLevel(log.level)
-            .setMessage(log.message.encrypt())
+        val log = Log.newBuilder()
+            .setDate(now())
+            .setLevel(level)
+            .setMessage(message.encrypt())
             .setPublicKey(diffieHellman.publicKey)
             .build()
+
+        val logs = listOf(log).toLogs()
+
+        suspendCoroutine { continuation ->
+            stub.log(logs, CoroutineStreamObserver(continuation))
+        }
+    }
 
     private fun String.encrypt(): String =
         encryptor.encrypt(this)
