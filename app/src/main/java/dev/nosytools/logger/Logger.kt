@@ -14,7 +14,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider
 import java.security.Security
 import kotlin.coroutines.suspendCoroutine
 
-class Logger(private val config: Config) {
+class Logger(private val apiKey: String) {
 
     init {
         Security.removeProvider("BC");
@@ -23,10 +23,10 @@ class Logger(private val config: Config) {
 
     private val stub: LoggerStub by lazy {
         val headers = Metadata().apply {
-            put(API_KEY_METADATA, config.apiKey)
+            put(API_KEY_METADATA, apiKey)
         }
 
-        ManagedChannelBuilder.forTarget(config.url)
+        ManagedChannelBuilder.forTarget(BuildConfig.COLLECTOR_URL)
             .useTransportSecurity()
             .build()
             .let(LoggerGrpc::newStub)
