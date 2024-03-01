@@ -12,7 +12,6 @@ import nosy_logger.LoggerGrpc.LoggerStub
 import nosy_logger.LoggerOuterClass
 import nosy_logger.LoggerOuterClass.Empty
 import nosy_logger.LoggerOuterClass.Log
-import now
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import java.security.Security
 import kotlin.coroutines.suspendCoroutine
