@@ -69,15 +69,6 @@ android {
             }
         }
     }
-
-    libraryVariants.all {
-        val variant = name
-
-        outputs.all {
-            val output = this as BaseVariantOutputImpl;
-            output.outputFileName = "nosy-inspect-${variant}.aar"
-        }
-    }
 }
 
 dependencies {

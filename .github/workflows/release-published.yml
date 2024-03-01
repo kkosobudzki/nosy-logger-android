@@ -53,3 +53,8 @@ jobs:
             --repo="$GITHUB_REPOSITORY" \
             --title="$VERSION" \
             --generate-notes
+      - name: attach aar to release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload "$VERSION" build/outputs/aar/logger-release.aar
