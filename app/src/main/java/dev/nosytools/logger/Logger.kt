@@ -16,9 +16,8 @@ class Logger(private val apiKey: String) {
         Security.addProvider(BouncyCastleProvider())
     }
 
-    private val collector by lazy { Collector(apiKey) }
     private val diffieHellman by lazy { DiffieHellman() }
-    private val scheduler by lazy { Scheduler(collector) }
+    private val scheduler by lazy { Scheduler(apiKey) }
 
     private lateinit var encryptor: Encryptor
 
@@ -27,7 +26,7 @@ class Logger(private val apiKey: String) {
             throw IllegalStateException("Already initialized")
         }
 
-        val remotePublicKey = collector.handshake()
+        val remotePublicKey = Collector(apiKey).handshake()
 
         encryptor = Encryptor(
             sharedSecretKey = diffieHellman.sharedSecret(remotePublicKey)

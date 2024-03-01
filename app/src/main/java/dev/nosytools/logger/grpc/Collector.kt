@@ -4,6 +4,8 @@ import dev.nosytools.logger.BuildConfig
 import io.grpc.ManagedChannelBuilder
 import io.grpc.Metadata
 import io.grpc.stub.MetadataUtils
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import nosy_logger.LoggerGrpc
 import nosy_logger.LoggerOuterClass
 import nosy_logger.LoggerOuterClass.Log
@@ -24,19 +26,23 @@ internal class Collector(private val apiKey: String) {
     }
 
     internal suspend fun handshake(): String {
-        val remotePublicKey = suspendCoroutine { continuation ->
-            stub.handshake(
-                LoggerOuterClass.Empty.newBuilder().build(),
-                CoroutineStreamObserver(continuation)
-            )
+        val remotePublicKey = withContext(Dispatchers.IO) {
+            suspendCoroutine { continuation ->
+                stub.handshake(
+                    LoggerOuterClass.Empty.newBuilder().build(),
+                    CoroutineStreamObserver(continuation)
+                )
+            }
         }
 
         return remotePublicKey.key
     }
 
     internal suspend fun log(logs: List<Log>) {
-        suspendCoroutine { continuation ->
-            stub.log(logs.toLogs(), CoroutineStreamObserver(continuation))
+        withContext(Dispatchers.IO) {
+            suspendCoroutine { continuation ->
+                stub.log(logs.toLogs(), CoroutineStreamObserver(continuation))
+            }
         }
     }
 
