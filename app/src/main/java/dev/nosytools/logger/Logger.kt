@@ -2,6 +2,7 @@ package dev.nosytools.logger
 
 import dev.nosytools.logger.crypto.DiffieHellman
 import dev.nosytools.logger.crypto.Encryptor
+import dev.nosytools.logger.grpc.CoroutineStreamObserver
 import dev.nosytools.logger.grpc.DelegatedStreamObserver
 import io.grpc.ManagedChannelBuilder
 import io.grpc.Metadata
@@ -12,6 +13,7 @@ import nosy_logger.LoggerOuterClass.Empty
 import nosy_logger.LoggerOuterClass.Log
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import java.security.Security
+import kotlin.coroutines.suspendCoroutine
 
 class Logger(private val config: Config) {
 
@@ -36,19 +38,16 @@ class Logger(private val config: Config) {
 
     private lateinit var encryptor: Encryptor
 
-    fun init(onCompleted: () -> Unit, onError: (Throwable?) -> Unit) {
-        stub.handshake(
-            Empty.newBuilder().build(),
-            DelegatedStreamObserver(
-                whenNext = { remotePublicKey ->
-                    encryptor = Encryptor(
-                        sharedSecretKey = diffieHellman.sharedSecret(remotePublicKey.key)
-                    )
-
-                    onCompleted()
-                },
-                whenError = onError
+    suspend fun init() {
+        val remotePublicKey = suspendCoroutine { continuation ->
+            stub.handshake(
+                Empty.newBuilder().build(),
+                CoroutineStreamObserver(continuation)
             )
+        }
+
+        encryptor = Encryptor(
+            sharedSecretKey = diffieHellman.sharedSecret(remotePublicKey.key)
         )
     }
 
