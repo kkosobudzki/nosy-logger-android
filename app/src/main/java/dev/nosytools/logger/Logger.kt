@@ -38,6 +38,10 @@ class Logger(private val config: Config) {
     private lateinit var encryptor: Encryptor
 
     suspend fun init() {
+        if (this::encryptor.isInitialized) {
+            throw IllegalStateException("Already initialized")
+        }
+
         val remotePublicKey = suspendCoroutine { continuation ->
             stub.handshake(
                 Empty.newBuilder().build(),
@@ -51,6 +55,10 @@ class Logger(private val config: Config) {
     }
 
     suspend fun log(logs: List<Log>) {
+        if (!this::encryptor.isInitialized) {
+            throw IllegalStateException("Not initialized - make sure to call init() before you start logging")
+        }
+
         suspendCoroutine { continuation ->
             logs.map(::encrypt)
                 .toLogs()
