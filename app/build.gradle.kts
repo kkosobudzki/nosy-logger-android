@@ -1,3 +1,4 @@
+import com.android.build.gradle.internal.api.BaseVariantOutputImpl
 import com.google.protobuf.gradle.proto
 
 plugins {
@@ -66,6 +67,15 @@ android {
             proto {
                 srcDir("src/main/protos")
             }
+        }
+    }
+
+    libraryVariants.all {
+        val variant = name
+
+        outputs.all {
+            val output = this as BaseVariantOutputImpl;
+            output.outputFileName = "nosy-inspect-${variant}.aar"
         }
     }
 }
