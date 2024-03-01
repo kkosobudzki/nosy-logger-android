@@ -3,7 +3,7 @@ package dev.nosytools.logger
 import dev.nosytools.logger.crypto.DiffieHellman
 import dev.nosytools.logger.crypto.Encryptor
 import dev.nosytools.logger.grpc.CoroutineStreamObserver
-import dev.nosytools.logger.grpc.toLogs
+import dev.nosytools.logger.scheduler.Scheduler
 import io.grpc.ManagedChannelBuilder
 import io.grpc.Metadata
 import io.grpc.stub.MetadataUtils
@@ -34,8 +34,8 @@ class Logger(private val apiKey: String) {
             .let(LoggerGrpc::newStub)
             .withInterceptors(MetadataUtils.newAttachHeadersInterceptor(headers))
     }
-
     private val diffieHellman by lazy { DiffieHellman() }
+    private val scheduler by lazy { Scheduler(stub) }
 
     private lateinit var encryptor: Encryptor
 
@@ -56,22 +56,20 @@ class Logger(private val apiKey: String) {
         )
     }
 
-    suspend fun debug(message: String) = log(message, LoggerOuterClass.Level.LEVEL_DEBUG)
+    fun debug(message: String) = log(message, LoggerOuterClass.Level.LEVEL_DEBUG)
 
-    suspend fun info(message: String) = log(message, LoggerOuterClass.Level.LEVEL_INFO)
+    fun info(message: String) = log(message, LoggerOuterClass.Level.LEVEL_INFO)
 
-    suspend fun warning(message: String) = log(message, LoggerOuterClass.Level.LEVEL_WARN)
+    fun warning(message: String) = log(message, LoggerOuterClass.Level.LEVEL_WARN)
 
-    suspend fun error(message: String) = log(message, LoggerOuterClass.Level.LEVEL_ERROR)
+    fun error(message: String) = log(message, LoggerOuterClass.Level.LEVEL_ERROR)
 
-    suspend fun exception(throwable: Throwable) = error(throwable.message ?: "$throwable")
+    fun exception(throwable: Throwable) = error(throwable.message ?: "$throwable")
 
-    private suspend fun log(message: String, level: LoggerOuterClass.Level) {
+    private fun log(message: String, level: LoggerOuterClass.Level) {
         if (!this::encryptor.isInitialized) {
             throw IllegalStateException("Not initialized - make sure to call init() before you start logging")
         }
-
-        // TODO log to work manager and the send
 
         val log = Log.newBuilder()
             .setDate(now())
@@ -80,11 +78,7 @@ class Logger(private val apiKey: String) {
             .setPublicKey(diffieHellman.publicKey)
             .build()
 
-        val logs = listOf(log).toLogs()
-
-        suspendCoroutine { continuation ->
-            stub.log(logs, CoroutineStreamObserver(continuation))
-        }
+        scheduler.schedule(log)
     }
 
     private fun String.encrypt(): String =
