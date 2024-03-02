@@ -5,6 +5,7 @@ import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import dev.nosytools.logger.log
 import nosy_logger.LoggerOuterClass.Log
 import java.util.concurrent.TimeUnit
 
@@ -21,6 +22,8 @@ internal class Scheduler(private val context: Context, private val apiKey: Strin
     private val data by lazy { SendLogsWorker.Arguments(apiKey).serialize() }
 
     fun schedule(log: Log) {
+        "Scheduler::schedule".log()
+
         SharedBuffer.push(log)
 
         val request = PeriodicWorkRequestBuilder<SendLogsWorker>(15, TimeUnit.MINUTES)

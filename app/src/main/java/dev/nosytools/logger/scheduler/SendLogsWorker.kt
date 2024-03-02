@@ -6,13 +6,18 @@ import androidx.work.Data
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import dev.nosytools.logger.grpc.Collector
+import dev.nosytools.logger.log
 
 internal class SendLogsWorker(context: Context, params: WorkerParameters) : CoroutineWorker(context, params) {
     override suspend fun doWork(): Result {
+        "SendLogsWorker::doWork".log()
+
         val arguments = Arguments.from(inputData)
         val logs = SharedBuffer.evict()
 
         if (logs.isNotEmpty()) {
+            "SendLogsWorker::doWork -> sending".log()
+            
             Collector(arguments.apiKey).log(logs)
         }
 
