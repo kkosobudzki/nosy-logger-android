@@ -17,7 +17,7 @@ internal class SendLogsWorker(context: Context, params: WorkerParameters) : Coro
 
         if (logs.isNotEmpty()) {
             "SendLogsWorker::doWork -> sending".log()
-            
+
             Collector(arguments.apiKey).log(logs)
         }
 
