@@ -10,15 +10,11 @@ import dev.nosytools.logger.grpc.Collector
 internal class SendLogsWorker(context: Context, params: WorkerParameters) : CoroutineWorker(context, params) {
     override suspend fun doWork(): Result {
         val arguments = Arguments.from(inputData)
-
-        val collector = Collector(arguments.apiKey)
         val logs = SharedBuffer.evict()
 
-        if (logs.isEmpty()) {
-            return Result.success()
+        if (logs.isNotEmpty()) {
+            Collector(arguments.apiKey).log(logs)
         }
-
-        collector.log(logs)
 
         return Result.success()
     }

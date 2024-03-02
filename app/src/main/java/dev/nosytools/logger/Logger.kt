@@ -1,5 +1,6 @@
 package dev.nosytools.logger
 
+import android.content.Context
 import dev.nosytools.logger.crypto.DiffieHellman
 import dev.nosytools.logger.crypto.Encryptor
 import dev.nosytools.logger.grpc.Collector
@@ -9,7 +10,7 @@ import nosy_logger.LoggerOuterClass.Log
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import java.security.Security
 
-class Logger(private val apiKey: String) {
+class Logger(private val context: Context, private val apiKey: String) {
 
     init {
         Security.removeProvider("BC");
@@ -17,7 +18,7 @@ class Logger(private val apiKey: String) {
     }
 
     private val diffieHellman by lazy { DiffieHellman() }
-    private val scheduler by lazy { Scheduler(apiKey) }
+    private val scheduler by lazy { Scheduler(context, apiKey) }
 
     private lateinit var encryptor: Encryptor
 
