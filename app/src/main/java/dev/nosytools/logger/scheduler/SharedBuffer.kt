@@ -1,14 +1,14 @@
 package dev.nosytools.logger.scheduler
 
-import nosy_logger.LoggerOuterClass.Log
+import dev.nosytools.logger.TemporaryLog
 
 internal object SharedBuffer {
 
-    private val items: MutableList<Log> = mutableListOf()
+    private val items: MutableList<TemporaryLog> = mutableListOf()
 
-    internal fun push(log: Log) {
+    internal fun push(log: TemporaryLog) {
         items.add(log)
     }
 
-    internal fun evict(): List<Log> = items.filterTo(mutableListOf()) { true }
+    internal fun evict(): List<TemporaryLog> = items.filterTo(mutableListOf()) { true }
 }

@@ -5,11 +5,11 @@ import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import dev.nosytools.logger.TemporaryLog
 import dev.nosytools.logger.log
-import nosy_logger.LoggerOuterClass.Log
 import java.util.concurrent.TimeUnit
 
-internal class Scheduler(private val context: Context, private val apiKey: String) {
+internal class Scheduler(private val context: Context) {
 
     private val workManager by lazy { WorkManager.getInstance(context) }
 
@@ -19,9 +19,8 @@ internal class Scheduler(private val context: Context, private val apiKey: Strin
             .setRequiresStorageNotLow(true)
             .build()
     }
-    private val data by lazy { SendLogsWorker.Arguments(apiKey).serialize() }
 
-    fun schedule(log: Log) {
+    fun schedule(log: TemporaryLog) {
         "Scheduler::schedule".log()
 
         SharedBuffer.push(log)
@@ -29,7 +28,6 @@ internal class Scheduler(private val context: Context, private val apiKey: Strin
         val request = PeriodicWorkRequestBuilder<SendLogsWorker>(15, TimeUnit.MINUTES)
             .setInitialDelay(10, TimeUnit.SECONDS)
             .setConstraints(constraints)
-            .setInputData(data)
             .build()
 
         workManager.enqueueUniquePeriodicWork(WORK_NAME, ExistingPeriodicWorkPolicy.UPDATE, request)

@@ -2,36 +2,40 @@ package dev.nosytools.logger.scheduler
 
 import android.content.Context
 import androidx.work.CoroutineWorker
-import androidx.work.Data
 import androidx.work.WorkerParameters
-import androidx.work.workDataOf
+import dev.nosytools.logger.crypto.DiffieHellman
+import dev.nosytools.logger.crypto.Encryptor
 import dev.nosytools.logger.grpc.Collector
 import dev.nosytools.logger.log
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
-internal class SendLogsWorker(context: Context, params: WorkerParameters) : CoroutineWorker(context, params) {
+internal class SendLogsWorker(context: Context, params: WorkerParameters) :
+    CoroutineWorker(context, params), KoinComponent {
+
+    private val collector: Collector by inject()
+
     override suspend fun doWork(): Result {
         "SendLogsWorker::doWork".log()
 
-        val arguments = Arguments.from(inputData)
         val logs = SharedBuffer.evict()
 
         if (logs.isNotEmpty()) {
             "SendLogsWorker::doWork -> sending".log()
 
-            Collector(arguments.apiKey).log(logs)
+            val remotePublicKey = collector.handshake()
+
+            val diffieHellman = DiffieHellman()
+            val encryptor = Encryptor(
+                sharedSecretKey = diffieHellman.sharedSecret(remotePublicKey)
+            )
+            val encrypted = logs.map { log ->
+                log.encrypt(encryptor, diffieHellman.publicKey)
+            }
+
+            collector.log(encrypted)
         }
 
         return Result.success()
-    }
-
-    internal data class Arguments(val apiKey: String) {
-        internal fun serialize() = workDataOf(API_KEY to apiKey)
-
-        internal companion object {
-            private const val API_KEY = "API_KEY"
-
-            internal fun from(data: Data) =
-                Arguments(apiKey = data.getString(API_KEY).orEmpty())
-        }
     }
 }

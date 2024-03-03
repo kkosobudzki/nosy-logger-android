@@ -1,61 +1,62 @@
 package dev.nosytools.logger
 
 import android.content.Context
-import dev.nosytools.logger.crypto.DiffieHellman
-import dev.nosytools.logger.crypto.Encryptor
 import dev.nosytools.logger.grpc.Collector
 import dev.nosytools.logger.scheduler.Scheduler
-import nosy_logger.LoggerOuterClass
-import nosy_logger.LoggerOuterClass.Log
+import nosy_logger.LoggerOuterClass.Level
 import org.bouncycastle.jce.provider.BouncyCastleProvider
+import org.koin.core.context.startKoin
+import org.koin.dsl.module
 import java.security.Security
 
-class Logger(private val context: Context, private val apiKey: String) {
+class Logger(private val context: Context) {
 
     init {
         Security.removeProvider("BC");
         Security.addProvider(BouncyCastleProvider())
     }
 
-    private val diffieHellman by lazy { DiffieHellman() }
-    private val scheduler by lazy { Scheduler(context, apiKey) }
+    private val scheduler by lazy { Scheduler(context) }
 
-    private lateinit var encryptor: Encryptor
+    private val grpcModule = module {
+        single { Collector(getProperty("api-key")) }
+    }
 
-    suspend fun init() {
-        if (this::encryptor.isInitialized) {
+    private var initialized = false
+
+    fun init(apiKey: String) {
+        if (initialized) {
             throw IllegalStateException("Already initialized")
         }
 
-        val remotePublicKey = Collector(apiKey).handshake()
+        startKoin {
+            properties(
+                mapOf("api-key" to apiKey)
+            )
 
-        encryptor = Encryptor(
-            sharedSecretKey = diffieHellman.sharedSecret(remotePublicKey)
-        )
+            modules(grpcModule)
+        }
+
+        initialized = true
     }
 
-    fun debug(message: String) = log(message, LoggerOuterClass.Level.LEVEL_DEBUG)
+    fun debug(message: String) = log(message, Level.LEVEL_DEBUG)
 
-    fun info(message: String) = log(message, LoggerOuterClass.Level.LEVEL_INFO)
+    fun info(message: String) = log(message, Level.LEVEL_INFO)
 
-    fun warning(message: String) = log(message, LoggerOuterClass.Level.LEVEL_WARN)
+    fun warning(message: String) = log(message, Level.LEVEL_WARN)
 
-    fun error(message: String) = log(message, LoggerOuterClass.Level.LEVEL_ERROR)
+    fun error(message: String) = log(message, Level.LEVEL_ERROR)
 
     fun exception(throwable: Throwable) = error(throwable.message ?: "$throwable")
 
-    private fun log(message: String, level: LoggerOuterClass.Level) {
-        if (!this::encryptor.isInitialized) {
+    private fun log(message: String, level: Level) {
+        if (!initialized) {
             throw IllegalStateException("Not initialized - make sure to call init() before you start logging")
         }
 
-        val log = Log.newBuilder()
-            .setDate(now())
-            .setLevel(level)
-            .setMessage(encryptor.encrypt(message))
-            .setPublicKey(diffieHellman.publicKey)
-            .build()
-
-        scheduler.schedule(log)
+        scheduler.schedule(
+            TemporaryLog(message, level, now())
+        )
     }
 }

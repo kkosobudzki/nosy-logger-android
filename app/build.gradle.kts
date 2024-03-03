@@ -89,6 +89,7 @@ dependencies {
     implementation(libs.grpc.protobuf.lite)
     implementation(libs.grpc.stub)
     implementation(libs.javax.annotation.api)
+    implementation(libs.koin.core)
 
     testImplementation(libs.junit)
 }
