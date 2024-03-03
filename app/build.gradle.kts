@@ -1,4 +1,5 @@
 import com.android.build.gradle.internal.api.BaseVariantOutputImpl
+import com.android.build.gradle.internal.packaging.defaultExcludes
 import com.google.protobuf.gradle.proto
 
 plugins {
@@ -75,6 +76,12 @@ android {
         outputs.all {
             val output = this as BaseVariantOutputImpl;
             output.outputFileName = "nosy-logger-${variant}.aar"
+        }
+    }
+
+    packaging {
+        resources {
+            excludes.add("logger.proto")
         }
     }
 }
