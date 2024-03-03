@@ -21,8 +21,6 @@ internal class Scheduler(private val context: Context) {
     }
 
     fun schedule(log: TemporaryLog) {
-        "Scheduler::schedule".log()
-
         SharedBuffer.push(log)
 
         val request = PeriodicWorkRequestBuilder<SendLogsWorker>(15, TimeUnit.MINUTES)
