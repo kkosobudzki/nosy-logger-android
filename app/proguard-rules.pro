@@ -1,7 +1,3 @@
--keep public class * {
-    public protected *;
-}
-
 -keepparameternames
 
 -keepattributes Signature,Exceptions,*Annotation*,
@@ -12,10 +8,8 @@
     native <methods>;
 }
 
--keepclassmembers,allowoptimization enum * {
-    public static **[] values();
-    public static ** valueOf(java.lang.String);
-}
+-keep class dev.nosytools.logger.Logger { public *; }
+-keep class dev.nosytools.logger.scheduler.SendLogsWorker { public *; }
 
 -keepclassmembers class * implements java.io.Serializable {
     static final long serialVersionUID;
