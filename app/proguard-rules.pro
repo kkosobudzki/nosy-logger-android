@@ -23,3 +23,7 @@
 # GRPC
 -keep public class io.grpc.** { *; }
 -keep public interface io.grpc.** { *; }
+
+-keepclassmembers class * extends com.google.protobuf.GeneratedMessageLite {
+  <fields>;
+}
