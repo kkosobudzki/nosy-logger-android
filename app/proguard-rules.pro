@@ -19,3 +19,7 @@
     java.lang.Object writeReplace();
     java.lang.Object readResolve();
 }
+
+# GRPC
+-keep public class io.grpc.** { *; }
+-keep public interface io.grpc.** { *; }
