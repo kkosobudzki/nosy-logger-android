@@ -3,7 +3,6 @@ package dev.nosytools.logger.scheduler
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import dev.nosytools.logger.crypto.DiffieHellman
 import dev.nosytools.logger.crypto.Encryptor
 import dev.nosytools.logger.grpc.Collector
 import dev.nosytools.logger.log
@@ -25,12 +24,9 @@ internal class SendLogsWorker(context: Context, params: WorkerParameters) :
 
             val remotePublicKey = collector.handshake()
 
-            val diffieHellman = DiffieHellman()
-            val encryptor = Encryptor(
-                sharedSecretKey = diffieHellman.sharedSecret(remotePublicKey)
-            )
+            val encryptor = Encryptor(remotePublicKey)
             val encrypted = logs.map { log ->
-                log.encrypt(encryptor, diffieHellman.publicKey)
+                log.encrypt(encryptor)
             }
 
             collector.log(encrypted)
