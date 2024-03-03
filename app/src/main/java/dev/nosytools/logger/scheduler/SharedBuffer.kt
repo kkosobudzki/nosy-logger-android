@@ -10,5 +10,5 @@ internal object SharedBuffer {
         items.add(log)
     }
 
-    internal fun evict(): List<TemporaryLog> = items.filterTo(mutableListOf()) { true }
+    internal fun evict(): List<TemporaryLog> = items.toList().also { items.clear() }
 }
