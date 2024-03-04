@@ -104,3 +104,5 @@ logger.exception(IllegalStateException("some illegal state exception"))
 ## Scheduling
 
 First logs will be logged in 15 seconds after initialization, then every 15 minutes.
+
+Nosy Logger for Android utilizes Work Manager, thus it sends collected logs only where it is convenient for user. It will not try to do so when user is having low storage or low battery level.
