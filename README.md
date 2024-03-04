@@ -101,6 +101,10 @@ Logs throwable / exception with `error` level.
 logger.exception(IllegalStateException("some illegal state exception"))
 ```
 
+## Example
+
+Example app is available in [github repository](https://github.com/kkosobudzki/nosy-logger-android-example).
+
 ## Scheduling
 
 First logs will be logged in 15 seconds after initialization, then every 15 minutes.
