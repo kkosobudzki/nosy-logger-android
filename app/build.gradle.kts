@@ -129,7 +129,7 @@ protobuf {
 
 publishing {
     publications {
-        register<MavenPublication>("release") {
+        create<MavenPublication>("maven") {
             groupId = "dev.nosytools"
             artifactId = "logger"
             version = System.getenv("VERSION")
@@ -172,7 +172,7 @@ publishing {
 
         useInMemoryPgpKeys(id, key, password)
 
-        sign(publishing.publications.getByName("release"))
+        sign(publishing.publications.getByName("maven"))
     }
 
     repositories {
