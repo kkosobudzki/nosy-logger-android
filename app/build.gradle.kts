@@ -1,5 +1,4 @@
 import com.android.build.gradle.internal.api.BaseVariantOutputImpl
-import com.android.build.gradle.internal.packaging.defaultExcludes
 import com.google.protobuf.gradle.proto
 
 plugins {
