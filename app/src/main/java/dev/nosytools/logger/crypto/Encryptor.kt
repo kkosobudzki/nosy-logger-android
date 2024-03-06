@@ -8,7 +8,7 @@ import javax.crypto.spec.IvParameterSpec
 internal class Encryptor(private val remotePublicKey: String) {
 
     private val diffieHellman by lazy { DiffieHellman() }
-    private val sharedSecretKey by lazy { diffieHellman.sharedSecret(remotePublicKey) }
+    private val sharedSecretKey by lazy { diffieHellman.deriveSharedSecret(remotePublicKey) }
 
     internal val publicKey by lazy { diffieHellman.publicKey }
 

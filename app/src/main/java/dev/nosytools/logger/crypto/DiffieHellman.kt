@@ -26,7 +26,7 @@ internal class DiffieHellman {
       .encode()
   }
 
-  internal fun sharedSecret(otherPublicKey: String): SecretKey =
+  internal fun deriveSharedSecret(otherPublicKey: String): SecretKey =
     KeyAgreement.getInstance(ALGORITHM, PROVIDER)
       .apply {
         init(keyPair.private)
