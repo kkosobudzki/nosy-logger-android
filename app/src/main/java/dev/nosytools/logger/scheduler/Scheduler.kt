@@ -6,7 +6,6 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import dev.nosytools.logger.TemporaryLog
-import dev.nosytools.logger.log
 import java.util.concurrent.TimeUnit
 
 internal class Scheduler(private val context: Context) {
