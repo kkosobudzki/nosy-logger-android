@@ -11,6 +11,8 @@
 -keep class dev.nosytools.logger.Logger { public *; }
 -keep class dev.nosytools.logger.scheduler.SendLogsWorker { public *; }
 
+-keep class dev.nosytools.logger.BuildConfig { *; }
+
 -keepclassmembers class * implements java.io.Serializable {
     static final long serialVersionUID;
     private static final java.io.ObjectStreamField[] serialPersistentFields;
