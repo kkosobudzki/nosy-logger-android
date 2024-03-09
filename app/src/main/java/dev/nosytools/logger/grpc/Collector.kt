@@ -19,7 +19,7 @@ internal class Collector(private val apiKey: String) {
             put(API_KEY_METADATA, apiKey)
         }
 
-        "NosyLogger :: Collector ;: initialize stub, url: ${BuildConfig.COLLECTOR_URL}".log()
+        "NosyLogger :: Collector :: initialize stub, url: ${BuildConfig.COLLECTOR_URL}".log()
 
         ManagedChannelBuilder.forTarget(BuildConfig.COLLECTOR_URL)
             .useTransportSecurity()
