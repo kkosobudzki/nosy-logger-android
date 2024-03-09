@@ -26,18 +26,18 @@ class Logger(private val context: Context) {
 
     fun init(apiKey: String) {
         if (initialized) {
-            throw IllegalStateException("Already initialized")
+            "NosyLogger :: Logger :: init - already initialized, skipping".log()
+        } else {
+            startKoin {
+                properties(
+                    mapOf("api-key" to apiKey)
+                )
+
+                modules(grpcModule)
+            }
+
+            initialized = true
         }
-
-        startKoin {
-            properties(
-                mapOf("api-key" to apiKey)
-            )
-
-            modules(grpcModule)
-        }
-
-        initialized = true
     }
 
     fun debug(message: String) = log(message, Level.LEVEL_DEBUG)
@@ -51,12 +51,10 @@ class Logger(private val context: Context) {
     fun exception(throwable: Throwable) = error(throwable.message ?: "$throwable")
 
     private fun log(message: String, level: Level) {
-        if (!initialized) {
+        if (initialized) {
+            scheduler.schedule(TemporaryLog(message, level, now()))
+        } else {
             throw IllegalStateException("Not initialized - make sure to call init() before you start logging")
         }
-
-        scheduler.schedule(
-            TemporaryLog(message, level, now())
-        )
     }
 }
