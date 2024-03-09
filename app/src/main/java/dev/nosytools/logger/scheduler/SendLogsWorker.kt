@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import dev.nosytools.logger.crypto.Encryptor
+import dev.nosytools.logger.error
 import dev.nosytools.logger.grpc.Collector
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -14,17 +15,25 @@ internal class SendLogsWorker(context: Context, params: WorkerParameters) :
     private val collector: Collector by inject()
 
     override suspend fun doWork(): Result {
-        val logs = SharedBuffer.evict()
+        try {
+            val logs = SharedBuffer.evict()
 
-        if (logs.isNotEmpty()) {
-            val remotePublicKey = collector.handshake()
+            if (logs.isNotEmpty()) {
+                val remotePublicKey = collector.handshake()
 
-            val encryptor = Encryptor(remotePublicKey)
-            val encrypted = logs.map { log ->
-                log.encrypt(encryptor)
+                val encryptor = Encryptor(remotePublicKey)
+                val encrypted = logs.map { log ->
+                    log.encrypt(encryptor)
+                }
+
+                collector.log(encrypted)
             }
+        } catch (e: Error) {
+           "NosyLogger :: SendLogsWorker :: doWork failed: ${e.message}".error()
 
-            collector.log(encrypted)
+            e.printStackTrace()
+
+            return Result.failure()
         }
 
         return Result.success()
