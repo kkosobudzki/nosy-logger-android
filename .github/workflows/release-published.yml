@@ -31,7 +31,6 @@ jobs:
           echo "KEYSTORE=$KEYSTORE" >> $GITHUB_ENV
       - name: create aar
         run: |
-          echo $COLLECTOR_URL
           ./gradlew clean
           ./gradlew assembleRelease
         env:
