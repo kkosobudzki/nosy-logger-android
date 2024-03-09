@@ -1,6 +1,7 @@
 package dev.nosytools.logger.grpc
 
 import dev.nosytools.logger.BuildConfig
+import dev.nosytools.logger.log
 import io.grpc.ManagedChannelBuilder
 import io.grpc.Metadata
 import io.grpc.stub.MetadataUtils
@@ -17,6 +18,8 @@ internal class Collector(private val apiKey: String) {
         val headers = Metadata().apply {
             put(API_KEY_METADATA, apiKey)
         }
+
+        "NosyLogger :: Collector ;: initialize stub, url: ${BuildConfig.COLLECTOR_URL}".log()
 
         ManagedChannelBuilder.forTarget(BuildConfig.COLLECTOR_URL)
             .useTransportSecurity()
