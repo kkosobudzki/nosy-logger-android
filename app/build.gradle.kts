@@ -43,8 +43,6 @@ android {
             )
 
             signingConfig = signingConfigs.getByName("release")
-
-            buildConfigField("String", "COLLECTOR_URL", "\"${System.getenv("COLLECTOR_URL")}\"")
         }
     }
 
