@@ -43,11 +43,9 @@ android {
             )
 
             signingConfig = signingConfigs.getByName("release")
-        }
-    }
 
-    buildTypes.forEach {
-        it.buildConfigField("String", "COLLECTOR_URL", "\"${System.getenv("COLLECTOR_URL")}\"")
+            buildConfigField("String", "COLLECTOR_URL", "\"${System.getenv("COLLECTOR_URL")}\"")
+        }
     }
 
     compileOptions {
