@@ -12,7 +12,7 @@ plugins {
 
 android {
     namespace = "dev.nosytools.logger"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 28

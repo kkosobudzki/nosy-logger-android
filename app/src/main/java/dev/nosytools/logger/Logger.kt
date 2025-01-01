@@ -18,7 +18,7 @@ class Logger(private val context: Context) {
 
     private val scheduler by lazy { Scheduler(context) }
 
-    private val grpcModule = module {
+    private val restModule = module {
         single { Collector(getProperty("api-key")) }
     }
 
@@ -33,7 +33,7 @@ class Logger(private val context: Context) {
                     mapOf("api-key" to apiKey)
                 )
 
-                modules(grpcModule)
+                modules(restModule)
             }
 
             initialized = true

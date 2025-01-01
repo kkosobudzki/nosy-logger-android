@@ -1,11 +1,14 @@
 package dev.nosytools.logger.rest
 
+import dev.nosytools.logger.log
 import nosytools.logger.Logger.Log
 
 internal class Collector(private val apiKey: String) {
 
     internal suspend fun handshake(): String {
-        TODO()
+        "TODO handshake".log()
+
+        return "TODO"
 //        val remotePublicKey = withContext(Dispatchers.IO) {
 //            suspendCoroutine { continuation ->
 //                stub.handshake(
@@ -19,7 +22,8 @@ internal class Collector(private val apiKey: String) {
     }
 
     internal suspend fun log(logs: List<Log>) {
-        TODO()
+        "TODO log items".log()
+
 //        withContext(Dispatchers.IO) {
 //            suspendCoroutine { continuation ->
 //                stub.log(logs.toLogs(), CoroutineStreamObserver(continuation))

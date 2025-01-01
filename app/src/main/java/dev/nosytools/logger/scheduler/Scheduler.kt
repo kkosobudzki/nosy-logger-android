@@ -22,7 +22,7 @@ internal class Scheduler(private val context: Context) {
     fun schedule(log: TemporaryLog) {
         SharedBuffer.push(log)
 
-        val request = PeriodicWorkRequestBuilder<SendLogsWorker>(15, TimeUnit.MINUTES)
+        val request = PeriodicWorkRequestBuilder<SendLogsWorker>(15, TimeUnit.SECONDS) // FIXME: 15 minutes
             .setInitialDelay(10, TimeUnit.SECONDS)
             .setConstraints(constraints)
             .build()
