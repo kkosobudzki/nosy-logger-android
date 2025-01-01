@@ -1,24 +1,33 @@
 package dev.nosytools.logger.rest
 
+import dev.nosytools.logger.BuildConfig
 import dev.nosytools.logger.log
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import nosytools.logger.Logger.Log
+import nosytools.logger.Logger.PublicKey
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import kotlin.coroutines.suspendCoroutine
 
 internal class Collector(private val apiKey: String) {
 
-    internal suspend fun handshake(): String {
-        "TODO handshake".log()
+    private val client by lazy { OkHttpClient() }
 
-        return "TODO"
-//        val remotePublicKey = withContext(Dispatchers.IO) {
-//            suspendCoroutine { continuation ->
-//                stub.handshake(
-//                    LoggerOuterClass.Empty.newBuilder().build(),
-//                    CoroutineStreamObserver(continuation)
-//                )
-//            }
-//        }
-//
-//        return remotePublicKey.key
+    internal suspend fun handshake(): String {
+        val request = Request.Builder()
+            .header("x-api-key", apiKey)
+            .url("${BuildConfig.API_URL}/handshake")
+            .build()
+
+        val bytes = withContext(Dispatchers.IO) {
+            suspendCoroutine { continuation ->
+                client.newCall(request)
+                    .enqueue(CoroutineResponseCallback(continuation))
+            }
+        }
+
+        return PublicKey.parseFrom(bytes).key
     }
 
     internal suspend fun log(logs: List<Log>) {
@@ -35,9 +44,4 @@ internal class Collector(private val apiKey: String) {
 //        LoggerOuterClass.Logs.newBuilder()
 //            .also { builder -> forEach(builder::addLogs) }
 //            .build()
-//
-//    private companion object {
-//        val API_KEY_METADATA: Metadata.Key<String> =
-//            Metadata.Key.of("api-key", Metadata.ASCII_STRING_MARSHALLER)
-//    }
 }

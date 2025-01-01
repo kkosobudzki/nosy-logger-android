@@ -1,5 +1,7 @@
 import com.android.build.gradle.internal.api.BaseVariantOutputImpl
 import com.google.protobuf.gradle.proto
+import java.util.Properties
+import java.io.FileInputStream
 
 plugins {
     alias(libs.plugins.androidLibrary)
@@ -31,6 +33,14 @@ android {
 
     buildFeatures {
         buildConfig = true
+    }
+
+    val props = Properties().apply {
+        load(FileInputStream(File(rootProject.rootDir, "local.properties")))
+    }
+
+    buildTypes.forEach {
+        it.buildConfigField("String", "API_URL", "\"${props.getProperty("apiUrl")}\"")
     }
 
     buildTypes {
@@ -91,6 +101,7 @@ dependencies {
     implementation(libs.grpc.stub)
     implementation(libs.javax.annotation.api)
     implementation(libs.koin.core)
+    implementation(libs.okhttp)
 
     testImplementation(libs.junit)
 }
