@@ -96,14 +96,10 @@ dependencies {
     implementation(libs.androidx.work.ktx)
     implementation(libs.bouncycastle.pkix)
     implementation(libs.bouncycastle.prov)
-    implementation(libs.grpc.okhttp)
-    implementation(libs.grpc.protobuf.lite)
-    implementation(libs.grpc.stub)
+    implementation(libs.protobuf)
     implementation(libs.javax.annotation.api)
     implementation(libs.koin.core)
     implementation(libs.okhttp)
-
-    testImplementation(libs.junit)
 }
 
 protobuf {
@@ -111,22 +107,10 @@ protobuf {
         artifact = libs.protoc.get().toString()
     }
 
-    plugins {
-        create("grpc") {
-            artifact = libs.grpc.protoc.get().toString()
-        }
-    }
-
     generateProtoTasks {
         all().forEach { task ->
             task.builtins {
                 create("java") {
-                    option("lite")
-                }
-            }
-
-            task.plugins {
-                create("grpc") {
                     option("lite")
                 }
             }
