@@ -79,7 +79,7 @@ android {
         val variant = name
 
         outputs.all {
-            val output = this as BaseVariantOutputImpl;
+            val output = this as BaseVariantOutputImpl
             output.outputFileName = "nosy-logger-${variant}.aar"
         }
     }
