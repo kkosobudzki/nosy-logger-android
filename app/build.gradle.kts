@@ -35,12 +35,8 @@ android {
         buildConfig = true
     }
 
-    val props = Properties().apply {
-        load(FileInputStream(File(rootProject.rootDir, "local.properties")))
-    }
-
     buildTypes.forEach {
-        it.buildConfigField("String", "API_URL", "\"${props.getProperty("apiUrl")}\"")
+        it.buildConfigField("String", "API_URL", "\"${System.getenv("API_URL")}\"")
     }
 
     buildTypes {
