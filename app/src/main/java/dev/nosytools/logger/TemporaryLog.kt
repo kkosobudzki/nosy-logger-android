@@ -1,8 +1,8 @@
 package dev.nosytools.logger
 
 import dev.nosytools.logger.crypto.Encryptor
-import nosy_logger.LoggerOuterClass.Level
-import nosy_logger.LoggerOuterClass.Log
+import nosytools.logger.Logger.Level
+import nosytools.logger.Logger.Log
 
 internal data class TemporaryLog(val message: String, val level: Level, val date: String) {
 

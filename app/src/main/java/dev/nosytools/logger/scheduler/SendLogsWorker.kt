@@ -5,7 +5,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import dev.nosytools.logger.crypto.Encryptor
 import dev.nosytools.logger.error
-import dev.nosytools.logger.grpc.Collector
+import dev.nosytools.logger.rest.Collector
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 

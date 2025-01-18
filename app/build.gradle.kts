@@ -1,5 +1,7 @@
 import com.android.build.gradle.internal.api.BaseVariantOutputImpl
 import com.google.protobuf.gradle.proto
+import java.util.Properties
+import java.io.FileInputStream
 
 plugins {
     alias(libs.plugins.androidLibrary)
@@ -12,7 +14,7 @@ plugins {
 
 android {
     namespace = "dev.nosytools.logger"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 28
@@ -31,6 +33,14 @@ android {
 
     buildFeatures {
         buildConfig = true
+    }
+
+    val props = Properties().apply {
+        load(FileInputStream(File(rootProject.rootDir, "local.properties")))
+    }
+
+    buildTypes.forEach {
+        it.buildConfigField("String", "API_URL", "\"${props.getProperty("apiUrl")}\"")
     }
 
     buildTypes {
@@ -69,7 +79,7 @@ android {
         val variant = name
 
         outputs.all {
-            val output = this as BaseVariantOutputImpl;
+            val output = this as BaseVariantOutputImpl
             output.outputFileName = "nosy-logger-${variant}.aar"
         }
     }
@@ -86,13 +96,10 @@ dependencies {
     implementation(libs.androidx.work.ktx)
     implementation(libs.bouncycastle.pkix)
     implementation(libs.bouncycastle.prov)
-    implementation(libs.grpc.okhttp)
-    implementation(libs.grpc.protobuf.lite)
-    implementation(libs.grpc.stub)
+    implementation(libs.protobuf)
     implementation(libs.javax.annotation.api)
     implementation(libs.koin.core)
-
-    testImplementation(libs.junit)
+    implementation(libs.okhttp)
 }
 
 protobuf {
@@ -100,22 +107,10 @@ protobuf {
         artifact = libs.protoc.get().toString()
     }
 
-    plugins {
-        create("grpc") {
-            artifact = libs.grpc.protoc.get().toString()
-        }
-    }
-
     generateProtoTasks {
         all().forEach { task ->
             task.builtins {
                 create("java") {
-                    option("lite")
-                }
-            }
-
-            task.plugins {
-                create("grpc") {
                     option("lite")
                 }
             }

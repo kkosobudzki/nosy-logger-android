@@ -1,13 +1,13 @@
 package dev.nosytools.logger
 
 import android.content.Context
-import dev.nosytools.logger.grpc.Collector
+import dev.nosytools.logger.rest.Collector
 import dev.nosytools.logger.scheduler.Scheduler
-import nosy_logger.LoggerOuterClass.Level
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
 import java.security.Security
+import nosytools.logger.Logger.Level
 
 class Logger(private val context: Context) {
 
@@ -18,7 +18,7 @@ class Logger(private val context: Context) {
 
     private val scheduler by lazy { Scheduler(context) }
 
-    private val grpcModule = module {
+    private val restModule = module {
         single { Collector(getProperty("api-key")) }
     }
 
@@ -33,7 +33,7 @@ class Logger(private val context: Context) {
                     mapOf("api-key" to apiKey)
                 )
 
-                modules(grpcModule)
+                modules(restModule)
             }
 
             initialized = true
