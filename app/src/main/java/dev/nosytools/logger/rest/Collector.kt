@@ -18,6 +18,7 @@ internal class Collector(private val apiKey: String) {
 
     private fun request(path: String): Request.Builder =
         Request.Builder()
+            .header("accept", CONTENT_TYPE_PROTOBUF)
             .header("x-api-key", apiKey)
             .url("${BuildConfig.API_URL}${path}")
 
@@ -37,7 +38,7 @@ internal class Collector(private val apiKey: String) {
     internal suspend fun log(logs: List<Log>) {
         val body = logs.toLogs()
             .toByteArray()
-            .toRequestBody(contentType = contentTypeProtobuf)
+            .toRequestBody(contentType = CONTENT_TYPE_PROTOBUF.toMediaTypeOrNull())
 
         withContext(Dispatchers.IO) {
             suspendCoroutine { continuation ->
@@ -56,6 +57,6 @@ internal class Collector(private val apiKey: String) {
             .build()
 
     private companion object {
-        private val contentTypeProtobuf = "application/x-protobuf".toMediaTypeOrNull()
+        private const val CONTENT_TYPE_PROTOBUF = "application/x-protobuf"
     }
 }
