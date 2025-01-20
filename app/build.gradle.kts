@@ -1,7 +1,5 @@
 import com.android.build.gradle.internal.api.BaseVariantOutputImpl
 import com.google.protobuf.gradle.proto
-import java.util.Properties
-import java.io.FileInputStream
 
 plugins {
     alias(libs.plugins.androidLibrary)
