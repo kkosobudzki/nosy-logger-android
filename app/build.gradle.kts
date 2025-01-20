@@ -122,7 +122,7 @@ publishing {
             pom {
                 name = "logger"
                 description = "Nosy Logger android plugin"
-                url = "https://logger.nosytools.dev/"
+                url = "https://nosytools.dev/logger/"
 
                 licenses {
                     license {

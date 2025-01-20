@@ -14,14 +14,17 @@ jobs:
         with:
           token: ${{ secrets.PROTOS_SUBMODULE_TOKEN }}
           submodules: true
+
       - name: create version
         run: |
           echo "VERSION=${GITHUB_REF_NAME:1}" >> $GITHUB_ENV
+
       - name: set up java 17
         uses: actions/setup-java@v3
         with:
           java-version: "17"
           distribution: "zulu"
+
       - name: install keystore
         env:
           KEYSTORE_BASE64: ${{ secrets.keystore }}
@@ -29,6 +32,7 @@ jobs:
           KEYSTORE=$RUNNER_TEMP/keystore.jks
           echo -n "$KEYSTORE_BASE64" | base64 --decode > $KEYSTORE
           echo "KEYSTORE=$KEYSTORE" >> $GITHUB_ENV
+
       - name: create aar
         run: |
           ./gradlew clean
@@ -38,6 +42,7 @@ jobs:
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           API_URL: ${{ secrets.API_URL }}
+
       - name: publish to maven central
         run: ./gradlew publish
         env:
@@ -46,6 +51,7 @@ jobs:
           SIGNING_KEY_ID: ${{ secrets.MAVEN_SIGNING_KEY_ID }}
           SIGNING_KEY_PASSWORD: ${{ secrets.MAVEN_SIGNING_KEY_PASSWORD }}
           SIGNING_KEY: ${{ secrets.MAVEN_SIGNING_KEY }}
+
       - name: create release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -54,6 +60,7 @@ jobs:
             --repo="$GITHUB_REPOSITORY" \
             --title="$VERSION" \
             --generate-notes
+
       - name: attach aar to release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
