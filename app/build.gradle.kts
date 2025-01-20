@@ -34,7 +34,7 @@ android {
     }
 
     buildTypes.forEach {
-        it.buildConfigField("String", "API_URL", "\"${System.getenv("COLLECTOR_URL")}\"")
+        it.buildConfigField("String", "API_URL", "\"https://jhtfw5qvof.execute-api.eu-central-1.amazonaws.com/prod\"")
     }
 
     buildTypes {
