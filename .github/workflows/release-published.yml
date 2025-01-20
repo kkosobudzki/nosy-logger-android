@@ -41,7 +41,7 @@ jobs:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-          API_URL: ${{ secrets.API_URL }}
+          COLLECTOR_URL: ${{ secrets.COLLECTOR_URL }}
 
       - name: publish to maven central
         run: ./gradlew publish

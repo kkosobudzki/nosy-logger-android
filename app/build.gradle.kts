@@ -34,7 +34,7 @@ android {
     }
 
     buildTypes.forEach {
-        it.buildConfigField("String", "API_URL", "\"${System.getenv("API_URL")}\"")
+        it.buildConfigField("String", "API_URL", "\"${System.getenv("COLLECTOR_URL")}\"")
     }
 
     buildTypes {
